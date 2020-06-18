@@ -1,7 +1,6 @@
-use super::{
-    gamelog::GameLog, CombatStats, InBackpack, Name, Position, Potion, WantsToDrinkPotion,
-    WantsToDropItem, WantsToPickupItem,
-};
+use super::{WantsToPickupItem, Name, InBackpack, Position, gamelog::GameLog, WantsToUseItem,
+    Consumable, ProvidesHealing, CombatStats, WantsToDropItem, InflictsDamage, Map, SufferDamage,
+    AreaOfEffect, Confusion};
 use specs::prelude::*;
 
 pub struct ItemCollectionSystem {}
