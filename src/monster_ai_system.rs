@@ -1,4 +1,4 @@
-use super::{Map, Monster, Position, RunState, Viewshed, WantsToMelee, Confusion};
+use super::{Confusion, Map, Monster, Position, RunState, Viewshed, WantsToMelee};
 use rltk::Point;
 use specs::prelude::*;
 
@@ -16,7 +16,7 @@ impl<'a> System<'a> for MonsterAI {
         ReadStorage<'a, Monster>,
         WriteStorage<'a, Position>,
         WriteStorage<'a, WantsToMelee>,
-        WriteStorage<'a, Confusion>
+        WriteStorage<'a, Confusion>,
     );
 
     fn run(&mut self, data: Self::SystemData) {
@@ -30,7 +30,7 @@ impl<'a> System<'a> for MonsterAI {
             monster,
             mut position,
             mut wants_to_melee,
-            mut confused
+            mut confused,
         ) = data;
 
         if *runstate != RunState::MonsterTurn {

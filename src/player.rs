@@ -1,7 +1,6 @@
 use super::{
-    CombatStats, Map, Player, Position, RunState,
-    State, Viewshed, WantsToMelee, WantsToPickupItem,
-    Item, gamelog::GameLog, TileType, Monster
+    gamelog::GameLog, CombatStats, Item, Map, Monster, Player, Position, RunState, State, TileType,
+    Viewshed, WantsToMelee, WantsToPickupItem,
 };
 use rltk::{Point, Rltk, VirtualKeyCode};
 use specs::prelude::*;
@@ -33,13 +32,15 @@ pub fn player_input(gs: &mut State, ctx: &mut Rltk) -> RunState {
                 if try_next_level(&mut gs.ecs) {
                     return RunState::NextLevel;
                 }
-            },
+            }
 
             VirtualKeyCode::G => get_item(&mut gs.ecs),
 
             VirtualKeyCode::D => return RunState::ShowDropItem,
 
             VirtualKeyCode::I => return RunState::ShowInventory,
+
+            VirtualKeyCode::R => return RunState::ShowRemoveItem,
 
             VirtualKeyCode::Escape => return RunState::SaveGame,
 
@@ -105,7 +106,9 @@ pub fn try_next_level(ecs: &mut World) -> bool {
         true
     } else {
         let mut gamelog = ecs.fetch_mut::<GameLog>();
-        gamelog.entries.push("There is no way down from here.".to_string());
+        gamelog
+            .entries
+            .push("There is no way down from here.".to_string());
         false
     }
 }
@@ -159,7 +162,9 @@ fn skip_turn(ecs: &mut World) -> RunState {
             let mob = monsters.get(*entity_id);
             match mob {
                 None => {}
-                Some(_) => { can_heal = false; }
+                Some(_) => {
+                    can_heal = false;
+                }
             }
         }
     }
@@ -172,4 +177,3 @@ fn skip_turn(ecs: &mut World) -> RunState {
 
     RunState::PlayerTurn
 }
-

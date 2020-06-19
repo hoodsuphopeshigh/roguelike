@@ -1,8 +1,8 @@
 use super::Rect;
 use rltk::{Algorithm2D, BaseMap, Point, RandomNumberGenerator, Rltk, RGB};
+use serde::{Deserialize, Serialize};
 use specs::prelude::*;
 use std::cmp::{max, min};
-use serde::{Serialize, Deserialize};
 
 pub const MAPWIDTH: usize = 80;
 pub const MAPHEIGHT: usize = 43;
@@ -28,7 +28,7 @@ pub struct Map {
 
     #[serde(skip_serializing)]
     #[serde(skip_deserializing)]
-    pub tile_content: Vec<Vec<Entity>>
+    pub tile_content: Vec<Vec<Entity>>,
 }
 
 impl Map {
@@ -64,7 +64,9 @@ impl Map {
     }
 
     fn is_exit_valid(&self, x: i32, y: i32) -> bool {
-        if x < 1 || x > self.width - 1 || y < 1 || y > self.height - 1 { return false; }
+        if x < 1 || x > self.width - 1 || y < 1 || y > self.height - 1 {
+            return false;
+        }
         let idx = self.xy_idx(x, y);
         !self.blocked[idx]
     }
@@ -92,7 +94,7 @@ impl Map {
             visible_tiles: vec![false; MAPCOUNT],
             blocked: vec![false; MAPCOUNT],
             tile_content: vec![Vec::new(); MAPCOUNT],
-            depth: new_depth
+            depth: new_depth,
         };
 
         const MAX_ROOMS: i32 = 30;
@@ -132,7 +134,7 @@ impl Map {
             }
         }
 
-        let stairs_position = map.rooms[map.rooms.len()-1].center();
+        let stairs_position = map.rooms[map.rooms.len() - 1].center();
         let stairs_idx = map.xy_idx(stairs_position.0, stairs_position.1);
         map.tiles[stairs_idx] = TileType::DownStairs;
 
@@ -159,16 +161,32 @@ impl BaseMap for Map {
         let w = self.width as usize;
 
         // Cardinals
-        if self.is_exit_valid(x - 1, y) { exits.push((idx - 1, 1.0)) };
-        if self.is_exit_valid(x + 1, y) { exits.push((idx + 1, 1.0)) };
-        if self.is_exit_valid(x, y - 1) { exits.push((idx - w, 1.0)) };
-        if self.is_exit_valid(x, y + 1) { exits.push((idx + w, 1.0)) };
+        if self.is_exit_valid(x - 1, y) {
+            exits.push((idx - 1, 1.0))
+        };
+        if self.is_exit_valid(x + 1, y) {
+            exits.push((idx + 1, 1.0))
+        };
+        if self.is_exit_valid(x, y - 1) {
+            exits.push((idx - w, 1.0))
+        };
+        if self.is_exit_valid(x, y + 1) {
+            exits.push((idx + w, 1.0))
+        };
 
         // Diagonals
-        if self.is_exit_valid(x - 1, y - 1) { exits.push(((idx - w) - 1, 1.45)) };
-        if self.is_exit_valid(x + 1, y - 1) { exits.push(((idx - w) + 1, 1.45)) };
-        if self.is_exit_valid(x - 1, y + 1) { exits.push(((idx + w) - 1, 1.45)) };
-        if self.is_exit_valid(x + 1, y + 1) { exits.push(((idx + w) + 1, 1.45)) };
+        if self.is_exit_valid(x - 1, y - 1) {
+            exits.push(((idx - w) - 1, 1.45))
+        };
+        if self.is_exit_valid(x + 1, y - 1) {
+            exits.push(((idx - w) + 1, 1.45))
+        };
+        if self.is_exit_valid(x - 1, y + 1) {
+            exits.push(((idx + w) - 1, 1.45))
+        };
+        if self.is_exit_valid(x + 1, y + 1) {
+            exits.push(((idx + w) + 1, 1.45))
+        };
 
         exits
     }
@@ -180,12 +198,12 @@ impl Algorithm2D for Map {
     }
 }
 
-pub fn draw_map(ecs: &World, ctx : &mut Rltk) {
+pub fn draw_map(ecs: &World, ctx: &mut Rltk) {
     let map = ecs.fetch::<Map>();
 
     let mut y = 0;
     let mut x = 0;
-    for (idx,tile) in map.tiles.iter().enumerate() {
+    for (idx, tile) in map.tiles.iter().enumerate() {
         // Render a tile depending upon the tile type
 
         if map.revealed_tiles[idx] {
@@ -205,7 +223,9 @@ pub fn draw_map(ecs: &World, ctx : &mut Rltk) {
                     fg = RGB::from_f32(0., 1.0, 1.0);
                 }
             }
-            if !map.visible_tiles[idx] { fg = fg.to_greyscale() }
+            if !map.visible_tiles[idx] {
+                fg = fg.to_greyscale()
+            }
             ctx.set(x, y, fg, RGB::from_f32(0., 0., 0.), glyph);
         }
 
