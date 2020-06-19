@@ -7,6 +7,7 @@ use specs::prelude::*;
 pub struct MeleeCombatSystem {}
 
 impl<'a> System<'a> for MeleeCombatSystem {
+    #[allow(clippy::type_complexity)]
     type SystemData = (
         Entities<'a>,
         WriteExpect<'a, GameLog>,
@@ -62,6 +63,7 @@ impl<'a> System<'a> for MeleeCombatSystem {
                         0,
                         (stats.power + offensive_bonus) - (target_stats.defense + defensive_bonus),
                     );
+
                     if damage == 0 {
                         log.entries.push(format!(
                             "{} is unable to hurt {}",

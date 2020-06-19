@@ -9,8 +9,6 @@ use specs::prelude::*;
 use specs::saveload::{MarkedBuilder, SimpleMarker};
 use std::collections::HashMap;
 
-const MAX_MONSTERS: i32 = 4;
-
 pub fn player(ecs: &mut World, player_x: i32, player_y: i32) -> Entity {
     ecs.create_entity()
         .with(Position {
@@ -42,6 +40,8 @@ pub fn player(ecs: &mut World, player_x: i32, player_y: i32) -> Entity {
         .build()
 }
 
+const MAX_MONSTERS: i32 = 4;
+
 fn room_table(map_depth: i32) -> RandomTable {
     RandomTable::new()
         .add("Goblin", 10)
@@ -56,6 +56,8 @@ fn room_table(map_depth: i32) -> RandomTable {
         .add("Tower Shield", map_depth - 1)
 }
 
+/// Fills a room with stuff!
+#[allow(clippy::map_entry)]
 pub fn spawn_room(ecs: &mut World, room: &Rect, map_depth: i32) {
     let spawn_table = room_table(map_depth);
     let mut spawn_points: HashMap<usize, String> = HashMap::new();
@@ -102,11 +104,10 @@ pub fn spawn_room(ecs: &mut World, room: &Rect, map_depth: i32) {
 }
 
 fn orc(ecs: &mut World, x: i32, y: i32) {
-    monster(ecs, x, y, rltk::to_cp437('o'), "Orc")
+    monster(ecs, x, y, rltk::to_cp437('o'), "Orc");
 }
-
 fn goblin(ecs: &mut World, x: i32, y: i32) {
-    monster(ecs, x, y, rltk::to_cp437('g'), "Goblin")
+    monster(ecs, x, y, rltk::to_cp437('g'), "Goblin");
 }
 
 fn monster<S: ToString>(ecs: &mut World, x: i32, y: i32, glyph: rltk::FontCharType, name: S) {
@@ -172,7 +173,7 @@ fn magic_missile_scroll(ecs: &mut World, x: i32, y: i32) {
         .with(Item {})
         .with(Consumable {})
         .with(Ranged { range: 6 })
-        .with(InflictsDamage { damage: 8 })
+        .with(InflictsDamage { damage: 20 })
         .marked::<SimpleMarker<SerializeMe>>()
         .build();
 }

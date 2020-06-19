@@ -102,14 +102,12 @@ impl<'a> System<'a> for ItemUseSystem {
                     let area_effect = aoe.get(useitem.item);
                     match area_effect {
                         None => {
-                            // Single target
                             let idx = map.xy_idx(target.x, target.y);
                             for mob in map.tile_content[idx].iter() {
                                 targets.push(*mob);
                             }
                         }
                         Some(area_effect) => {
-                            // AoE
                             let mut blast_tiles =
                                 rltk::field_of_view(target, area_effect.radius, &*map);
                             blast_tiles.retain(|p| {
@@ -126,7 +124,7 @@ impl<'a> System<'a> for ItemUseSystem {
                 }
             }
 
-            // Equippable
+            // Equip
             let item_equippable = equippable.get(useitem.item);
             match item_equippable {
                 None => {}
@@ -134,7 +132,6 @@ impl<'a> System<'a> for ItemUseSystem {
                     let target_slot = can_equip.slot;
                     let target = targets[0];
 
-                    // Remove any items the target has in the item's slot
                     let mut to_unequip: Vec<Entity> = Vec::new();
                     for (item_entity, already_equipped, name) in
                         (&entities, &equipped, &names).join()
@@ -154,7 +151,6 @@ impl<'a> System<'a> for ItemUseSystem {
                             .expect("Unable to insert backpack entry");
                     }
 
-                    // Wield the item
                     equipped
                         .insert(
                             useitem.item,

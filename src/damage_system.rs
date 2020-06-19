@@ -29,7 +29,6 @@ pub fn delete_the_dead(ecs: &mut World) {
         let names = ecs.read_storage::<Name>();
         let entities = ecs.entities();
         let mut log = ecs.write_resource::<GameLog>();
-
         for (entity, stats) in (&entities, &combat_stats).join() {
             if stats.hp < 1 {
                 let player = players.get(entity);

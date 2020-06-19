@@ -10,8 +10,8 @@ pub const MAPCOUNT: usize = MAPHEIGHT * MAPWIDTH;
 
 #[derive(PartialEq, Copy, Clone, Serialize, Deserialize)]
 pub enum TileType {
-    Floor,
     Wall,
+    Floor,
     DownStairs,
 }
 
@@ -77,13 +77,13 @@ impl Map {
         }
     }
 
-    pub fn clear_context_index(&mut self) {
+    pub fn clear_content_index(&mut self) {
         for content in self.tile_content.iter_mut() {
             content.clear();
         }
     }
 
-    /// Using algorithm from http://rogueliketutorials.com/tutorials/tcod/part-3/
+    /// Using an algorithm from http://rogueliketutorials.com/tutorials/tcod/part-3/
     pub fn new_map_rooms_and_corridors(new_depth: i32) -> Map {
         let mut map = Map {
             tiles: vec![TileType::Wall; MAPCOUNT],
@@ -123,10 +123,10 @@ impl Map {
                     let (prev_x, prev_y) = map.rooms[map.rooms.len() - 1].center();
                     if rng.range(0, 2) == 1 {
                         map.apply_horizontal_tunnel(prev_x, new_x, prev_y);
-                        map.apply_vertical_tunnel(prev_y, new_y, prev_x);
+                        map.apply_vertical_tunnel(prev_y, new_y, new_x);
                     } else {
                         map.apply_vertical_tunnel(prev_y, new_y, prev_x);
-                        map.apply_horizontal_tunnel(prev_x, new_x, prev_y);
+                        map.apply_horizontal_tunnel(prev_x, new_x, new_y);
                     }
                 }
 
@@ -160,7 +160,7 @@ impl BaseMap for Map {
         let y = idx as i32 / self.width;
         let w = self.width as usize;
 
-        // Cardinals
+        // Cardinal directions
         if self.is_exit_valid(x - 1, y) {
             exits.push((idx - 1, 1.0))
         };
@@ -176,17 +176,17 @@ impl BaseMap for Map {
 
         // Diagonals
         if self.is_exit_valid(x - 1, y - 1) {
-            exits.push(((idx - w) - 1, 1.45))
-        };
+            exits.push(((idx - w) - 1, 1.45));
+        }
         if self.is_exit_valid(x + 1, y - 1) {
-            exits.push(((idx - w) + 1, 1.45))
-        };
+            exits.push(((idx - w) + 1, 1.45));
+        }
         if self.is_exit_valid(x - 1, y + 1) {
-            exits.push(((idx + w) - 1, 1.45))
-        };
+            exits.push(((idx + w) - 1, 1.45));
+        }
         if self.is_exit_valid(x + 1, y + 1) {
-            exits.push(((idx + w) + 1, 1.45))
-        };
+            exits.push(((idx + w) + 1, 1.45));
+        }
 
         exits
     }

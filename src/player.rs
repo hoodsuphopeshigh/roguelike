@@ -18,15 +18,13 @@ pub fn player_input(gs: &mut State, ctx: &mut Rltk) -> RunState {
 
             VirtualKeyCode::Down | VirtualKeyCode::J => try_move_player(0, 1, &mut gs.ecs),
 
-            VirtualKeyCode::Numpad9 | VirtualKeyCode::U => try_move_player(1, -1, &mut gs.ecs),
+            // Diagonals
+            VirtualKeyCode::U => try_move_player(1, -1, &mut gs.ecs),
+            VirtualKeyCode::Y => try_move_player(-1, -1, &mut gs.ecs),
+            VirtualKeyCode::N => try_move_player(1, 1, &mut gs.ecs),
+            VirtualKeyCode::B => try_move_player(-1, 1, &mut gs.ecs),
 
-            VirtualKeyCode::Numpad7 | VirtualKeyCode::Y => try_move_player(-1, -1, &mut gs.ecs),
-
-            VirtualKeyCode::Numpad3 | VirtualKeyCode::N => try_move_player(1, 1, &mut gs.ecs),
-
-            VirtualKeyCode::Numpad1 | VirtualKeyCode::B => try_move_player(-1, 1, &mut gs.ecs),
-
-            VirtualKeyCode::Numpad5 | VirtualKeyCode::Space => return skip_turn(&mut gs.ecs),
+            VirtualKeyCode::Space => return skip_turn(&mut gs.ecs),
 
             VirtualKeyCode::Period => {
                 if try_next_level(&mut gs.ecs) {
@@ -35,11 +33,8 @@ pub fn player_input(gs: &mut State, ctx: &mut Rltk) -> RunState {
             }
 
             VirtualKeyCode::G => get_item(&mut gs.ecs),
-
-            VirtualKeyCode::D => return RunState::ShowDropItem,
-
             VirtualKeyCode::I => return RunState::ShowInventory,
-
+            VirtualKeyCode::D => return RunState::ShowDropItem,
             VirtualKeyCode::R => return RunState::ShowRemoveItem,
 
             VirtualKeyCode::Escape => return RunState::SaveGame,
@@ -131,7 +126,7 @@ fn get_item(ecs: &mut World) {
     match target_item {
         None => gamelog
             .entries
-            .push("There it nothing here to pick up".to_string()),
+            .push("There is nothing here to pick up.".to_string()),
         Some(item) => {
             let mut pickup = ecs.write_storage::<WantsToPickupItem>();
             pickup

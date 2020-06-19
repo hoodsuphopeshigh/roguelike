@@ -27,7 +27,6 @@ pub fn save_game(_ecs: &mut World) {}
 
 #[cfg(not(target_arch = "wasm32"))]
 pub fn save_game(ecs: &mut World) {
-    // Create helper
     let mapcopy = ecs.get_mut::<super::map::Map>().unwrap().clone();
     let savehelper = ecs
         .create_entity()
@@ -35,7 +34,6 @@ pub fn save_game(ecs: &mut World) {
         .marked::<SimpleMarker<SerializeMe>>()
         .build();
 
-    // Actually serialize
     {
         let data = (
             ecs.entities(),
@@ -78,7 +76,6 @@ pub fn save_game(ecs: &mut World) {
         );
     }
 
-    // Clean up
     ecs.delete_entity(savehelper).expect("Crash on cleanup");
 }
 
@@ -103,7 +100,6 @@ macro_rules! deserialize_individually {
 
 pub fn load_game(ecs: &mut World) {
     {
-        // Delete everything
         let mut to_delete = Vec::new();
         for e in ecs.entities().join() {
             to_delete.push(e);
