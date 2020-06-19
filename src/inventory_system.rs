@@ -8,6 +8,7 @@ use specs::prelude::*;
 pub struct ItemCollectionSystem {}
 
 impl<'a> System<'a> for ItemCollectionSystem {
+    #[allow(clippy::type_complexity)]
     type SystemData = (
         ReadExpect<'a, Entity>,
         WriteExpect<'a, GameLog>,
@@ -67,6 +68,7 @@ impl<'a> System<'a> for ItemUseSystem {
         WriteStorage<'a, InBackpack>,
     );
 
+    #[allow(clippy::cognitive_complexity)]
     fn run(&mut self, data: Self::SystemData) {
         let (
             player_entity,
@@ -100,7 +102,7 @@ impl<'a> System<'a> for ItemUseSystem {
                     let area_effect = aoe.get(useitem.item);
                     match area_effect {
                         None => {
-                            // Single target in tile
+                            // Single target
                             let idx = map.xy_idx(target.x, target.y);
                             for mob in map.tile_content[idx].iter() {
                                 targets.push(*mob);
@@ -124,7 +126,7 @@ impl<'a> System<'a> for ItemUseSystem {
                 }
             }
 
-            // Equipping
+            // Equippable
             let item_equippable = equippable.get(useitem.item);
             match item_equippable {
                 None => {}
@@ -152,7 +154,7 @@ impl<'a> System<'a> for ItemUseSystem {
                             .expect("Unable to insert backpack entry");
                     }
 
-                    // Equip the item
+                    // Wield the item
                     equipped
                         .insert(
                             useitem.item,
@@ -195,7 +197,7 @@ impl<'a> System<'a> for ItemUseSystem {
                 }
             }
 
-            // Single target damage
+            // Damage
             let item_damages = inflict_damage.get(useitem.item);
             match item_damages {
                 None => {}
@@ -245,7 +247,7 @@ impl<'a> System<'a> for ItemUseSystem {
                     .expect("Unable to insert status");
             }
 
-            // Consumable check
+            // Consumable
             if used_item {
                 let consumable = consumables.get(useitem.item);
                 match consumable {
@@ -264,6 +266,7 @@ impl<'a> System<'a> for ItemUseSystem {
 pub struct ItemDropSystem {}
 
 impl<'a> System<'a> for ItemDropSystem {
+    #[allow(clippy::type_complexity)]
     type SystemData = (
         ReadExpect<'a, Entity>,
         WriteExpect<'a, GameLog>,
@@ -300,7 +303,7 @@ impl<'a> System<'a> for ItemDropSystem {
                         y: dropper_pos.y,
                     },
                 )
-                .unwrap();
+                .expect("Unable to insert position");
             backpack.remove(to_drop.item);
 
             if entity == *player_entity {
