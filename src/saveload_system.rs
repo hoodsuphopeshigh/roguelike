@@ -119,4 +119,4 @@ pub fn load_game(ecs: &mut World) {
 
 pub fn delete_save() {
     if Path::new("./savegame.json").exists() { std::fs::remove_file("./savegame.json").expect("Unable to delete file"); }
-}a
+}
